@@ -1,6 +1,8 @@
 const conexion = require('./conexion');
 const DATABASE = 'reservacanchas';
+const CANCHA = 'canchas'
 const RESERVAS = 'reservas';
+const TURNO = 'turnos';
 const objectId = require('mongodb').ObjectId;
 
 const fechaActual = new Date()
@@ -57,6 +59,7 @@ async function getReservaFecha(){
                    
     return fechaReserva;  
 }
+
 
 
 
