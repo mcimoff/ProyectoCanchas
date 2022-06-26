@@ -1,8 +1,7 @@
+const { ObjectId } = require('mongodb');
 const conexion = require('./conexion');
 const DATABASE = 'reservacanchas';
-const CANCHA = 'canchas'
 const RESERVAS = 'reservas';
-const TURNO = 'turnos';
 const objectId = require('mongodb').ObjectId;
 
 const fechaActual = new Date()
@@ -58,6 +57,35 @@ async function getReservaFecha(){
                      .toArray();
                    
     return fechaReserva;  
+
+
+    
+}
+
+async function agregarTurno(reserva){
+
+    const connectiondb = await conexion.getConnection();
+
+    const result = await connectiondb
+                     .db(DATABASE)
+                     .collection(RESERVAS)
+                     .insertOne(reserva)                         
+    return result;                 
+}
+
+
+
+async function getReservasPorCancha(id){
+   
+    const connectiondb = await conexion.getConnection();
+   
+
+    const reserva = await connectiondb
+                     .db(DATABASE)
+                     .collection(RESERVAS)
+                     .find({_id: new objectId(id)})
+                     .toArray();
+    return reserva;                     
 }
 
 
@@ -65,7 +93,9 @@ async function getReservaFecha(){
 
 
 
+module.exports = {getReservas,getReserva,getReservasLibres, getReservaHora,getReservaFecha,agregarTurno,getReservasPorCancha};
 
 
 
-module.exports = {getReservas,getReserva,getReservasLibres, getReservaHora,getReservaFecha};
+
+

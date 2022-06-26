@@ -1,9 +1,5 @@
 const reservas = require('../data/reservas');
 
-
-
-
-
 async function getReservas(){
     return reservas.getReservas();
 }
@@ -25,6 +21,14 @@ async function getReservaFecha(){
     
 }
 
+async function agregarTurno(reserva){
+        
+    return reservas.agregarTurno(reserva);
+}
 
+async function getReservasPorCancha(idCancha){
 
-module.exports = {getReservas,getReserva,getReservasLibres,getReservaHora, getReservaFecha};
+    return reservas.getReservasPorCancha(idCancha);
+}
+
+module.exports = {getReservas,getReserva,getReservasLibres,getReservaHora, getReservaFecha,agregarTurno,getReservasPorCancha};

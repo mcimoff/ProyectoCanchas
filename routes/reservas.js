@@ -3,10 +3,9 @@ const router = express.Router();
 const controller = require('../controllers/reservas');
 
 router.get('/', async (req, res) => {
+    
     res.json(await controller.getReservas());
 })
-
-
 
 router.get('/libres', async (req,res) => {
     const libres = await controller.getReservasLibres();
@@ -23,10 +22,22 @@ router.get('/fecha', async (req,res) =>{
     res.json(fechaTurnos)
 })
 
-router.get('/:id', async (req, res) =>{
-    const reserva = await controller.getReserva(req.params.id);
-    res.json(reserva);
+
+
+router.post('/', async(req,res) =>{
+    const nuevoTurno = req.body;
+    const resultado = await controller.agregarTurno(nuevoTurno);
+
+    res.json(resultado);
 })
+
+router.get('/filtrar/:id', async (req, res) =>{
+    
+    const reserva = await controller.getReservasPorCancha(req.params.id);
+    res.json(reserva);
+
+})
+
 
 
 
