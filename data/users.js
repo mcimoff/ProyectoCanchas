@@ -19,12 +19,14 @@ async function getAllUsers(){
     
 }
 
+//Validar datos de usuario que recibo 
+
 async function addUser(user){
     const connectdb = await connection.getConnection();
 
     //user.password ? await bcrypt.hash(user.password,8) : "No cumple parámetros";
 
-   user.password = await bcrypt.hash(user.password, 8);
+    user.password = await bcrypt.hash(user.password, 8);
 
     const result = await connectdb.db(DATABASE)
                                   .collection(USERS)

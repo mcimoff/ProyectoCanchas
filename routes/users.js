@@ -16,8 +16,9 @@ router.post('/', async (req, res) =>{
     res.status(201).json(result);
   }
   catch (error) {
-    res.status(401).send(error.message);
+    res.status(401);
   }
+    
 })
 
 router.post('/login',async (req, res)=>{
