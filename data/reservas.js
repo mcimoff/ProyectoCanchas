@@ -19,6 +19,16 @@ async function getReservas(){
     return reservas;                     
 }
 
+async function borrarReserva(id){
+    const connectiondb = await conexion.getConnection();
+    const reserva = await connectiondb
+                     .db(DATABASE)
+                     .collection(RESERVAS)
+                     .deleteOne({_id : new objectId(id)});
+                     
+    return reserva; 
+}
+
 async function borrarReservas(){
     const connectiondb = await conexion.getConnection();
     const borrarReservas = await connectiondb
@@ -116,7 +126,7 @@ async function getReservasPorCancha(id){
 
 
 
-module.exports = {getReservas,getReserva, getReservaHora,getReservaFecha,agregarTurno,getReservasPorCancha,borrarReservas};
+module.exports = {getReservas,getReserva, getReservaHora,getReservaFecha,agregarTurno,getReservasPorCancha,borrarReservas,borrarReserva};
 
 
 

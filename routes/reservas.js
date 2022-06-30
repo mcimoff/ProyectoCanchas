@@ -34,9 +34,19 @@ router.get('/filtrar/:id', async (req, res) =>{
 
 })
 
+router.delete('/borrarReserva/:id', async(req,res) =>{
+    const reservas = await controller.borrarReserva(req.params.id);
+    res.json(reservas);
+})
+
 router.delete('/borrarReservas', async(req,res) =>{
     const reservas = await controller.borrarReservas();
     res.json(reservas);
+})
+
+router.get('/:id', async(req,res) =>{
+    const reserva = await controller.getReserva(req.params.id);
+    res.json(reserva);
 })
 
 
