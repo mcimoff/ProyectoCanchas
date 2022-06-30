@@ -69,7 +69,10 @@ async function getReservasUsuario(email){
                                   .collection(RESERVAS)
                                   .find({email: {$eq: email}})
                                   .toArray();
-
+    if(!reservas){
+        throw new Error('No posee reservas')
+    }
+    
     return misReservas;
 };
 
