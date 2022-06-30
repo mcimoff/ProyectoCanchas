@@ -35,4 +35,8 @@ async function getReservasPorCancha(idCancha){
     return reservas.getReservasPorCancha(idCancha);
 }
 
-module.exports = {getReservas,getReserva,getReservaHora, getReservaFecha,agregarTurno,getReservasPorCancha,borrarReservas};
+async function borrarReserva(id){
+    return reservas.borrarReserva(id);
+}
+
+module.exports = {getReservas,getReserva,getReservaHora, getReservaFecha,agregarTurno,getReservasPorCancha,borrarReservas,borrarReserva};
