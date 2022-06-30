@@ -1,18 +1,15 @@
-
 var express = require('express');
 var router = express.Router();
 const data = require('./../data/users');
 const auth = require('./../middleware/authUsers');
-//const {validateEmail, handleValidationErrors} = require('./../middleware/validator');
 
-/* GET users listing. */
+/* GET users */
 router.get('/', auth,  async function(req, res, next) {
   const users = await data.getAllUsers();
   res.json(users);
 });
 
-//[validateEmail], handleValidationErrors (pendiente)
-
+//ADD User
 router.post('/',  async (req, res) =>{
   try{
     res.json(await data.addUser(req.body));
@@ -24,6 +21,7 @@ router.post('/',  async (req, res) =>{
     
 });
 
+//Log In
 router.post('/login',async (req, res)=>{
   try {
     const user = await data.findByCredentials(req.body.email, req.body.password);
@@ -37,7 +35,16 @@ router.post('/login',async (req, res)=>{
   }
 });
 
+//UPDATE password
+router.put('/update', async (req, res) =>{
+  try{
+  res.json(await data.updatePassword(req.body));
+  } catch (error){
+    res.status(401).send(error.message)
+  }
+});
 
+//DELETE User
 router.delete('/deleteUsuario/:id', async(req,res) =>{
   try{
     res.json( await data.removeUsuario(req.params.id));
@@ -46,6 +53,7 @@ router.delete('/deleteUsuario/:id', async(req,res) =>{
  }
 });
 
+//GET Mis Reservas
 router.get('/misReservas', async(req, res) =>{
  try{ 
     res.json(await data.getReservasUsuario(req.body));
@@ -53,7 +61,6 @@ router.get('/misReservas', async(req, res) =>{
     res.status(401).send(error.message);
  }
 });
-
 
 
 module.exports = router;
