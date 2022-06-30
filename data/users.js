@@ -1,4 +1,5 @@
 require('dotenv').config();
+const objectId = require('mongodb').ObjectId;
 const connection = require('./conexion');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -10,76 +11,55 @@ const RESERVAS = 'reservas';
 async function getAllUsers(){
     const connectdb = await connection.getConnection();
 
-    const users = await connectdb
-                    .db(DATABASE)
-                    .collection(USERS)
-                    .find()
-                    .toArray();
+    const users = await connectdb.db(DATABASE)
+                                 .collection(USERS)
+                                 .find()
+                                 .toArray();
     return users;
     
 }
 
+//Validar datos de usuario que recibo 
+
 async function addUser(user){
     const connectdb = await connection.getConnection();
-
-    //user.password ? await bcrypt.hash(user.password,8) : "No cumple parámetros";
-
-   user.password = await bcrypt.hash(user.password, 8);
+    const userReg = await connectiondb.db(DATABASE)
+                                      .collection(USERS)
+                                      .find({email: user.email })
+                                      .toArray();
+if(userReg.length>0){
+    throw new Error("El email ingresado ya esta en uso")
+}
+    
+    user.password = await bcrypt.hash(user.password, 8);
 
     const result = await connectdb.db(DATABASE)
                                   .collection(USERS)
                                   .insertOne(user);
+    
     return result;
 }
 
-// async function addUser(user) {
-//     const connectiondb = await conn.getConnection();
 
-//     user.password = await bcrypt.hash(user.password, 8);
 
-//     const userReg = await connectiondb.db(DATABASE)
-//                                       .collection(USERS)
-//                                       .findOne({email: user.email})
-                                
-//     if(userReg){
-//         throw new Error('Credenciales no validas');
-//     }
-    
-//     const newUser = {
-//                     ...user, 
-//                     reservas: [],
-//     }
-//     const result = await connectiondb.db(DATABASE)
-//                                      .collection(USERS)
-//                                      .insertOne(newUser);
-//     return result;
-// }
+async function findByCredentials(email, password) {
+    const connectiondb = await connection.getConnection();
+    const user = await connectiondb.db(DATABASE)
+                                    .collection(USERS)
+                                    .findOne({ email: email });
 
-async function findByCredentials(email, password){
-    const connectdb = await connection.getConnection();
-    const user = await connectdb.db(DATABASE)
-                    .collection(USERS)
-                    .findOne({email: email});
-    // validar si el usuario existe en nuestra base de datos
-    if(!user){
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!user || !isMatch) {
         throw new Error('Credenciales no validas');
     }
-
-    // validar la contraseñawebtoken
-    const isMatch = await bcrypt.compare(password, user.password);
-    
-    if(!isMatch){
-        throw new Error('Credenciales no validas');        
-    }
-    
     return user;
 }
 
 async function getReservasUsuario(email){
     const connectdb = await connection.getConnection();
     const user = await connectdb.db(DATABASE)
-                    .collection(USERS)
-                    .findOne({email: email});
+                                .collection(USERS)
+                                .findOne({email: email});
     // validar si el usuario existe en nuestra base de datos
     if(!user ){ 
         throw new Error('Usuario no registrado') 
@@ -91,25 +71,17 @@ async function getReservasUsuario(email){
                                   .toArray();
 
     return misReservas;
-}
+};
 
-// async function removeReserva(email, reservaId){
-//     const connectdb = await connection.getConnection();
-//     const user = await connectdb.db(DATABASE)
-//                                 .collection(USERS)
-//                                 .findOne({email: email});
-//      if(!user ){ 
-//         throw new Error('Usuario no registrado') 
-                                    
-//     }   
 
-//     const misReservas = await connectdb(DATABASE)
-//                                   .collection(RESERVAS)
-//                                   .({email: {$eq: email}})
-//                                   .toArray();
-   
-//     return await updateData(query, newValues);
-// }
+async function removeUsuario(id){
+    const connectiondb = await connection.getConnection();
+    const userReg = await connectiondb.db(DATABASE)
+                                      .collection(USERS)
+                                      .deleteOne({_id: new objectId(id)})
+                     
+    return userReg; 
+};
 
 
 function generateToken(user){
@@ -117,4 +89,4 @@ function generateToken(user){
     return token;
 }
 
-module.exports = {addUser, getAllUsers, findByCredentials, getReservasUsuario, generateToken};
+module.exports = {addUser, getAllUsers, findByCredentials, getReservasUsuario, removeUsuario, generateToken};

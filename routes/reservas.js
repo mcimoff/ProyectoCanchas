@@ -7,10 +7,6 @@ router.get('/', async (req, res) => {
     res.json(await controller.getReservas());
 })
 
-router.get('/libres', async (req,res) => {
-    const libres = await controller.getReservasLibres();
-    res.json(libres);
-})
 
 router.get('/horas/:hora', async (req,res) => {
     const horas = await controller.getReservaHora(req.params.hora);
@@ -38,7 +34,10 @@ router.get('/filtrar/:id', async (req, res) =>{
 
 })
 
-
+router.delete('/borrarReservas', async(req,res) =>{
+    const reservas = await controller.borrarReservas();
+    res.json(reservas);
+})
 
 
 module.exports = router;
