@@ -4,6 +4,7 @@ const DATABASE = 'reservacanchas';
 const RESERVAS = 'reservas';
 const objectId = require('mongodb').ObjectId;
 
+
 const fechaActual = new Date()
 
 console.log(fechaActual);
@@ -18,6 +19,16 @@ async function getReservas(){
     return reservas;                     
 }
 
+async function borrarReservas(){
+    const connectiondb = await conexion.getConnection();
+    const borrarReservas = await connectiondb
+                     .db(DATABASE)
+                     .collection(RESERVAS)
+                     .deleteMany();
+                     
+    return borrarReservas; 
+}
+
 async function getReserva(id){
     const connectiondb = await conexion.getConnection();
     const reserva = await connectiondb
@@ -28,22 +39,16 @@ async function getReserva(id){
     return reserva;                     
 }
 
-async function getReservasLibres(){
-    const connectiondb = await conexion.getConnection();
-    const libre = await connectiondb
-                     .db(DATABASE)
-                     .collection(RESERVAS)
-                     .find({'turnos.estaReservada': false})
-                     .toArray();
-    return libre;  
-}
 
 async function getReservaHora(hora){
     const connectiondb = await conexion.getConnection();
+
+
+
     const horaReserva = await connectiondb
                      .db(DATABASE)
                      .collection(RESERVAS)
-                     .find({'turnos.hora': parseInt(hora)})
+                     .find({'reservas.hora':{$gte: hora}})
                      .toArray();
     return horaReserva;  
 }
@@ -53,7 +58,7 @@ async function getReservaFecha(){
     const fechaReserva = await connectiondb
                      .db(DATABASE)
                      .collection(RESERVAS)
-                     .find({'turnos.fecha':{$gte: fechaActual}})
+                     .find({'reservas.fecha':{$gte: fechaActual}})
                      .toArray();
                    
     return fechaReserva;  
@@ -66,11 +71,33 @@ async function agregarTurno(reserva){
 
     const connectiondb = await conexion.getConnection();
 
-    const result = await connectiondb
-                     .db(DATABASE)
-                     .collection(RESERVAS)
-                     .insertOne(reserva)                         
-    return result;                 
+
+
+
+    const idCancha = reserva.idCancha.$oid;
+    
+    const reservasDeCancha = await getReservasPorCancha(idCancha);
+    const validarFecha = reservasDeCancha.find(res => res.fecha == reserva.fecha);
+
+   
+    if (validarFecha != undefined) {
+
+        reserva == null;
+
+        console.log('Ya existe una reserva para esa Cancha, Fecha y Hora')
+
+    } else{
+
+        const result = await connectiondb
+        .db(DATABASE)
+        .collection(RESERVAS)
+        .insertOne(reserva)                         
+return result;  
+    }
+
+    
+    
+                  
 }
 
 
@@ -79,11 +106,10 @@ async function getReservasPorCancha(id){
    
     const connectiondb = await conexion.getConnection();
    
-
     const reserva = await connectiondb
                      .db(DATABASE)
                      .collection(RESERVAS)
-                     .find({_id: new objectId(id)})
+                     .find({"idCancha.$oid" : (id)})
                      .toArray();
     return reserva;                     
 }
@@ -93,7 +119,7 @@ async function getReservasPorCancha(id){
 
 
 
-module.exports = {getReservas,getReserva,getReservasLibres, getReservaHora,getReservaFecha,agregarTurno,getReservasPorCancha};
+module.exports = {getReservas,getReserva, getReservaHora,getReservaFecha,agregarTurno,getReservasPorCancha,borrarReservas};
 
 
 
