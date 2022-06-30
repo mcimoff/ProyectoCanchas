@@ -71,9 +71,6 @@ async function agregarTurno(reserva){
 
     const connectiondb = await conexion.getConnection();
 
-
-
-
     const idCancha = reserva.idCancha.$oid;
     
     const reservasDeCancha = await getReservasPorCancha(idCancha);

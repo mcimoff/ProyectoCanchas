@@ -7,7 +7,7 @@ function auth(req, res, next){
     //console.log(token);
     try {
         const user = jwt.verify(token, process.env.CLAVESECRETA);
-        console.log(user);
+        //console.log(user);
         next();
     } catch (error) {
         res.status(401).send({error: error.message});

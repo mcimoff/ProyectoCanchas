@@ -1,7 +1,9 @@
+
 var express = require('express');
 var router = express.Router();
 const data = require('./../data/users');
-const auth = require('./../middleware/authUsers')
+const auth = require('./../middleware/authUsers');
+//const {validateEmail, handleValidationErrors} = require('./../middleware/validator');
 
 /* GET users listing. */
 router.get('/', auth,  async function(req, res, next) {
@@ -9,21 +11,21 @@ router.get('/', auth,  async function(req, res, next) {
   res.json(users);
 });
 
+//[validateEmail], handleValidationErrors (pendiente)
 
-router.post('/', async (req, res) =>{
+router.post('/',  async (req, res) =>{
   try{
     res.json(await data.addUser(req.body));
     res.status(201).json(result);
   }
-  catch (error) {
+    catch (error) {
     res.status(401);
   }
     
-})
+});
 
 router.post('/login',async (req, res)=>{
   try {
-    
     const user = await data.findByCredentials(req.body.email, req.body.password);
     const token = data.generateToken(user);
     res.send({user, token});
@@ -35,18 +37,23 @@ router.post('/login',async (req, res)=>{
   }
 });
 
-//definir si hace falta, porque se puede poner mail en reserva y traer por mail de usuario.
-router.put('/addReserva',async (req, res)=>{
+
+router.delete('/deleteUsuario/:id', async(req,res) =>{
   try{
-    res.json(await data.addReserva(req.body.userId, req.body.reservaId));
-  }
-  catch ( error) {
-    res.status(401).send(error.message);
-  }
+    res.json( await data.removeUsuario(req.params.id));
+  } catch (error) {
+    res.status(400).send(error.message)
+ }
 });
 
-router.put('/removeReserva',async (req, res)=>{
-  res.json(await data.removeReserva(req.body.userId, req.body.reservaId));
+router.get('/misReservas', async(req, res) =>{
+ try{ 
+    res.json(await data.getReservasUsuario(req.body));
+ }catch (error) {
+    res.status(401).send(error.message);
+ }
 });
+
+
 
 module.exports = router;

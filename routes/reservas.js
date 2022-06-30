@@ -24,8 +24,6 @@ router.post('/', async(req,res) =>{
     const nuevoTurno = req.body;
     const resultado = await controller.agregarTurno(nuevoTurno);
 
-
-
     res.json(resultado);
 })
 
