@@ -23,45 +23,32 @@ async function getAllUsers(){
 
 async function addUser(user){
     const connectdb = await connection.getConnection();
+ 
+    const userReg = await connectdb.db(DATABASE)
+                                    .collection(USERS)
+                                    .findOne({email: user.email});
+    console.log(userReg);
 
-    //user.password ? await bcrypt.hash(user.password,8) : "No cumple parámetros";
+    if(!userReg){
+        user.password = await bcrypt.hash(user.password, 8);
 
-    user.password = await bcrypt.hash(user.password, 8);
+        const result = await connectdb.db(DATABASE)
+                                      .collection(USERS)
+                                      .insertOne(user);
+        
+    } else{
+        throw new Error("El email ya se encuentra registrado");
+    }
 
-    const result = await connectdb.db(DATABASE)
-                                  .collection(USERS)
-                                  .insertOne(user);
     return result;
 }
 
-// async function addUser(user) {
-//     const connectiondb = await conn.getConnection();
-
-//     user.password = await bcrypt.hash(user.password, 8);
-
-//     const userReg = await connectiondb.db(DATABASE)
-//                                       .collection(USERS)
-//                                       .findOne({email: user.email})
-                                
-//     if(userReg){
-//         throw new Error('Credenciales no validas');
-//     }
-    
-//     const newUser = {
-//                     ...user, 
-//                     reservas: [],
-//     }
-//     const result = await connectiondb.db(DATABASE)
-//                                      .collection(USERS)
-//                                      .insertOne(newUser);
-//     return result;
-// }
 
 async function findByCredentials(email, password){
     const connectdb = await connection.getConnection();
     const user = await connectdb.db(DATABASE)
-                    .collection(USERS)
-                    .findOne({email: email});
+                        .collection(USERS)
+                        .findOne({email: email});
     // validar si el usuario existe en nuestra base de datos
     if(!user){
         throw new Error('Credenciales no validas');
