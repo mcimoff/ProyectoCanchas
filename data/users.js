@@ -74,6 +74,21 @@ async function getReservasUsuario(email){
 };
 
 
+async function updatePassword(user){
+    const query = { _id: new objectId(user._id) };
+    const passwordHash = await bcrypt.hash(user.password, 8);
+    const newValues = {
+        $set: {
+            password: passwordHash,
+        }
+    };
+    const connectdb = await connection.getConnection();
+    const result = await connectdb.db(DATABASE)
+                                     .collection(USERS)
+                                     .updateOne(query, newValues);
+    return result;
+};
+
 async function removeUsuario(id){
     const connectiondb = await connection.getConnection();
     const userReg = await connectiondb.db(DATABASE)
@@ -89,4 +104,4 @@ function generateToken(user){
     return token;
 }
 
-module.exports = {addUser, getAllUsers, findByCredentials, getReservasUsuario, removeUsuario, generateToken};
+module.exports = {addUser, getAllUsers, findByCredentials, getReservasUsuario, updatePassword, removeUsuario, generateToken};
