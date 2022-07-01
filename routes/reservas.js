@@ -13,8 +13,8 @@ router.get('/horas/:hora', async (req,res) => {
     res.json(horas);
 })
 
-router.get('/fecha', async (req,res) =>{
-    const fechaTurnos = await controller.getReservaFecha();
+router.get('/fecha/:fecha', async (req,res) =>{
+    const fechaTurnos = await controller.getReservaFecha(req.params.fecha);
     res.json(fechaTurnos)
 })
 

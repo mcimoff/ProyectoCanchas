@@ -38,6 +38,7 @@ router.post('/login',async (req, res)=>{
 //UPDATE password
 router.put('/update', async (req, res) =>{
   try{
+    console.log(req.body)
   res.json(await data.updatePassword(req.body));
   } catch (error){
     res.status(401).send(error.message)
@@ -49,17 +50,20 @@ router.delete('/deleteUsuario/:id', async(req,res) =>{
   try{
     res.json( await data.removeUsuario(req.params.id));
   } catch (error) {
-    res.status(400).send(error.message)
+    res.status(400).send(error.message);
  }
 });
 
 //GET Mis Reservas
-router.get('/misReservas', async(req, res) =>{
- try{ 
-    res.json(await data.getReservasUsuario(req.body));
- }catch (error) {
+router.get('/misReservas/:email', auth, async(req, res) =>{
+  try{
+      const mail = req.params.email;
+      console.log(mail);
+      res.json(await data.getReservasUsuario(mail));
+  } catch (error) {
     res.status(401).send(error.message);
- }
+  }
+
 });
 
 

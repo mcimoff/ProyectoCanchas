@@ -14,8 +14,8 @@ async function getReservaHora(hora){
     return reservas.getReservaHora(hora);
 }
 
-async function getReservaFecha(){
-   return reservas.getReservaFecha();
+async function getReservaFecha(fechaActual){
+   return reservas.getReservaFecha(fechaActual);
     
 }
 

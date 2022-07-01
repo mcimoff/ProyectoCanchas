@@ -63,12 +63,12 @@ async function getReservaHora(hora){
     return horaReserva;  
 }
 
-async function getReservaFecha(){
+async function getReservaFecha(fecha){
     const connectiondb = await conexion.getConnection();
     const fechaReserva = await connectiondb
                      .db(DATABASE)
                      .collection(RESERVAS)
-                     .find({'reservas.fecha':{$gte: fechaActual}})
+                     .find({'fecha': fecha})
                      .toArray();
                    
     return fechaReserva;  
