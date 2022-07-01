@@ -46,7 +46,7 @@ router.put('/update', async (req, res) =>{
 });
 
 //DELETE User
-router.delete('/deleteUsuario/:id', async(req,res) =>{
+router.delete('/deleteUsuario/:id', auth, async(req,res) =>{
   try{
     res.json( await data.removeUsuario(req.params.id));
   } catch (error) {
